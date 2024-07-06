@@ -11,5 +11,6 @@ router.use(express.urlencoded({extended:false}))
 //create user router
 router.post('/requestpayment',requestPayment);
 router.post('/c2b-callback-results',handleCallback);
+router.post("/payment-query", queryPaymentStatus)
 
 module.exports = router;
