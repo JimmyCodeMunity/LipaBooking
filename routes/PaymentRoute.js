@@ -1,5 +1,5 @@
 const express = require('express');
-const { requestPayment, handleCallback } = require('../controllers/PaymentController');
+const { requestPayment, handleCallback, queryPaymentStatus } = require('../controllers/PaymentController');
 const router = express.Router();
 router.use(express.json());
 
