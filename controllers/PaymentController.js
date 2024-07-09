@@ -56,7 +56,6 @@ const requestPayment = async (req, res) => {
       AccountReference,
       Currency,
       Amount,
-      CallBackURL,
       userId,
       seats,
       vehicleId,
@@ -87,6 +86,8 @@ const requestPayment = async (req, res) => {
 
     const jsonString = JSON.stringify(tripDetails);
     const urlEncodedBookingData = encodeURIComponent(jsonString);
+    const CallBackURL = process.env.CallBackURL;
+    console.log(CallBackURL)
 
     const formetedCallbackUrl = `${CallBackURL}?bookingData=${urlEncodedBookingData}`;
     const response = await axios.post(
@@ -182,6 +183,33 @@ const handleBooking = async (bookingData) => {
   return newBooking;
 };
 
+// const handleCallback = async (req, res) => {
+//   const callbackData = req.body;
+//   console.log("C2B Callback Data:", callbackData);
+
+//   const bookingData = req.query.bookingData;
+//   const jsonString = decodeURIComponent(bookingData);
+//   const jsonData = JSON.parse(jsonString);
+
+//   if (callbackData.ResultCode == 0) {
+//     console.log("A successful transaction");
+//     try {
+//       // Do proper validation before adding the record to db
+//       const booking = await handleBooking(jsonData);
+//       console.log(booking);
+//       // For callbacks returning a structured json data is not necessary
+//       res.status(200).json("ok");
+//     } catch (error) {
+//       console.error("Booking error:", error);
+//       res.status(200).json("ok");
+//     }
+//   } else {
+//     console.log("A failed transaction");
+//     res.status(200).json("ok");
+//   }
+// };
+
+
 const handleCallback = async (req, res) => {
   const callbackData = req.body;
   console.log("C2B Callback Data:", callbackData);
@@ -193,10 +221,21 @@ const handleCallback = async (req, res) => {
   if (callbackData.ResultCode == 0) {
     console.log("A successful transaction");
     try {
-      // Do proper validation before adding the record to db
-      const booking = await handleBooking(jsonData);
-      console.log(booking);
-      // For callbacks returning a structured json data is not necessary
+      const transactionId = callbackData.CheckoutRequestID;
+      console.log('transid', transactionId);
+      const transactionStatus = "Success";
+      // const transactionDate = new Date(callbackData.TransactionDate);
+
+      const newBooking = await handleBooking(jsonData);
+
+      // Update the booking with transaction details
+      newBooking.transactionId = transactionId;
+      newBooking.transactionStatus = transactionStatus;
+      // newBooking.transactionDate = transactionDate;
+
+      await newBooking.save();
+
+      console.log(newBooking);
       res.status(200).json("ok");
     } catch (error) {
       console.error("Booking error:", error);
@@ -204,9 +243,28 @@ const handleCallback = async (req, res) => {
     }
   } else {
     console.log("A failed transaction");
-    res.status(200).json("ok");
+    try {
+      const transactionId = callbackData.CheckoutRequestID;
+      const transactionStatus = "Failed";
+      const transactionDate = new Date(callbackData.TransactionDate);
+
+      const failedBooking = new Booking({
+        ...jsonData,
+        transactionId,
+        transactionStatus,
+        transactionDate,
+      });
+
+      await failedBooking.save();
+      console.log(failedBooking);
+      res.status(200).json("ok");
+    } catch (error) {
+      console.error("Error saving failed transaction:", error);
+      res.status(200).json("ok");
+    }
   }
 };
+
 
 const queryPaymentStatus = async (req, res) => {
   const { CheckoutRequestID } = req.body;
@@ -233,6 +291,23 @@ const queryPaymentStatus = async (req, res) => {
   }
 };
 
+const getPaymentStatus = async(req,res)=>{
+  try {
+    const {transactionId} = req.params;
+    const state = await Booking.find({transactionId});
+    if(!state){
+        res.status(404).json({message:'you have not added any payment with that email'});
+    }
+    console.log(state.status)
+    res.status(200).json(state);
+
+} catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "data not located" })
+
+}
+}
+
 app.post("/request-payment", requestPayment);
 app.post("/c2b-callback-results", handleCallback);
 app.post("/payment-query", queryPaymentStatus);
@@ -243,4 +318,5 @@ module.exports = {
   requestPayment,
   handleCallback,
   queryPaymentStatus,
+  getPaymentStatus
 };
