@@ -255,7 +255,7 @@ const handleCallback = async (req, res) => {
         transactionDate,
       });
 
-      await failedBooking.save();
+      // await failedBooking.save();
       console.log(failedBooking);
       res.status(200).json("ok");
     } catch (error) {
