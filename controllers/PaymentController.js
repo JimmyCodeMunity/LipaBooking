@@ -87,6 +87,7 @@ const requestPayment = async (req, res) => {
     const jsonString = JSON.stringify(tripDetails);
     const urlEncodedBookingData = encodeURIComponent(jsonString);
     const CallBackURL = process.env.CallBackURL;
+    // const merchantCode = process.env.MerchantCode;
     console.log(CallBackURL)
 
     const formetedCallbackUrl = `${CallBackURL}?bookingData=${urlEncodedBookingData}`;

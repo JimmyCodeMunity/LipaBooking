@@ -137,11 +137,75 @@ const getAllUsersById = async (req, res) => {
       res.status(500).json({ error: 'Server error' });
     }
   };
+
+  const updateUserByEmail = async(req,res) =>{
+    try {
+    const { email } = req.params;
+    const updatedUser = await User.findOneAndUpdate(
+      { email: email }, // Find the brand by its name
+      req.body, // Update the brand with the request body data
+      { new: true } // Return the updated brand as the response
+    );
+
+    // If brand fetched cannot be found
+    if (!updatedUser) {
+      return res.status(404).json({ message: `Cannot find user with email ${email}` });
+    }
+
+    res.status(200).json(updatedUser);
+    console.log("Data updated successfully");
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+
+  }
+}
+
+
+
+const updateUserPasswordByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { password } = req.body;
+
+    // Check if newPassword is provided
+    if (!password) {
+      return res.status(400).json({ message: 'New password is required' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    const updatedUser = await User.findOneAndUpdate(
+      { email: email },
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    // If user with the provided email is not found
+    if (!updatedUser) {
+      return res.status(404).json({ message: `Cannot find user with email ${email}` });
+    }
+
+    res.status(200).json(updatedUser);
+    console.log('Password updated successfully');
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
+
 module.exports = {
     createUser,
     findAllUsers,
     getAllUsersByEmail,
     Login,
     AssignSeats,
-    getAllUsersById
+    getAllUsersById,
+    updateUserPasswordByEmail,
+    updateUserByEmail
 }
