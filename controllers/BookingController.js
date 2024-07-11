@@ -71,6 +71,23 @@ const getBookings = async (req, res) => {
   }
 };
 
+
+const getUserBookings = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const bookings = await Booking.find({
+      userId: userId,
+      transactionStatus: 'Success',
+      bookingStatus: 'Pending',
+    });
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 // Route to get all booked seats for a specific vehicle
 const getAllBookedSeats = async (req, res) => {
   const { vehicleId } = req.params;
@@ -95,5 +112,6 @@ const getAllBookedSeats = async (req, res) => {
 module.exports = {
   // handleBooking,
   getBookings,
-  getAllBookedSeats
+  getAllBookedSeats,
+  getUserBookings
 };

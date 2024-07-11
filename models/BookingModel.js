@@ -96,6 +96,10 @@ const BookingSchema = new Schema({
   transactionStatus: {
     type: String,
   },
+  bookingStatus:{
+    type: String,
+    default: 'Pending',
+  }
   // transactionDate: {
   //   type: Date,
   //   default: Date.now,
