@@ -75,21 +75,21 @@ const AssignSeats =  async (req, res) => {
   
 
 
-// const getAllUsersByEmail = async (req, res) => {
-//     try {
-//         const {email} = req.params;
-//         const user = await User.find({email});
-//         if(!user){
-//             res.status(404).json({message:'you have not added any user with that email'});
-//         }
-//         res.status(200).json(user);
+const getAllUsersByEmail = async (req, res) => {
+    try {
+        const {email} = req.params;
+        const user = await User.find({email});
+        if(!user){
+            res.status(404).json({message:'you have not added any user with that email'});
+        }
+        res.status(200).json(user);
 
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).json({ error: "data not located" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "data not located" })
 
-//     }
-// }
+    }
+}
 
 
 
@@ -115,7 +115,6 @@ const AssignSeats =  async (req, res) => {
 //         res.status(500).json({ error: 'Failed to login' });
 //     }
 // };
-
 const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
