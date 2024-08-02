@@ -10,6 +10,7 @@ const Vehicle = require("../models/VehicleModel");
 const Destination = require("../models/DestinationModel");
 const Trip = require("../models/TripModel");
 const Driver = require("../models/DriverModel");
+const Booking = require("../models/BookingModel");
 
 const createAdmin = async (req, res) => {
   try {
@@ -474,6 +475,19 @@ const updateDestinationById = async(req,res)=>{
 }
 
 
+const getBookings = async(req,res)=>{
+  try {
+    const bookings = await Booking.find({});
+    res.status(200).json(bookings);
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({message: error.message})
+    
+  }
+}
+
+
 module.exports = {
   createAdmin,
   findAllUsers,
@@ -498,5 +512,6 @@ module.exports = {
   updateDestinationById,
   deleteDestinationById,
   getDestinationById,
-  getDriverById
+  getDriverById,
+  getBookings
 };
