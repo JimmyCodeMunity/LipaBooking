@@ -15,6 +15,10 @@ const vehicleSchema = new mongoose.Schema({
     type: String,
     default: "available", // Correctly setting the default value
   },
+  hasdriver: {
+    type: String,
+    default: false, // Correctly setting the default value
+  },
 
   createdAt: {
     type: Date,
