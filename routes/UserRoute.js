@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, findAllUsers, getAllUsersByEmail, Login, AssignSeats, getAllUsersById, updateUserByEmail, updateUserPasswordByEmail } = require('../controllers/UserController');
+const { createUser, findAllUsers, getAllUsersByEmail, Login, AssignSeats, getAllUsersById, updateUserByEmail, updateUserPasswordByEmail, forgotPassword, resetPassword } = require('../controllers/UserController');
 const { getAllBookedSeats, getUserBookings } = require('../controllers/BookingController');
 
 
@@ -47,5 +47,9 @@ router.get('/userbookings/:userId',getUserBookings);
 
 ///user login
 router.post('/login',Login);
+
+
+router.post("/forgetPassword", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 
 module.exports = router;
