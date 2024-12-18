@@ -5,6 +5,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Trip = require("../models/TripModel");
+const Vehicle = require("../models/VehicleModel");
 
 //create trip
 const createTrip = async (req, res) => {
@@ -18,7 +19,7 @@ const createTrip = async (req, res) => {
       price,
       tripdate
     } = req.body;
-    const existingTrip = await Trip.findOne({ vehicleId });
+    const existingTrip = await Trip.findOne({ departure,destination,tripdate });
 
     //check if exist
     if (existingTrip) {
@@ -34,9 +35,20 @@ const createTrip = async (req, res) => {
         price,
         tripdate
       });
+      // console.log("trip",trip)
+      // update vehicle status to busy
+      const vehicle = await Vehicle.findByIdAndUpdate(
+        vehicleId,
+        { status: "busy" },
+        { new: true }
+      );
+      // console.log("busy vehicle",vehicle)
       res
-        .status(200)
-        .json({ message: "Destination created Successfully", trip });
+       .status(201)
+       .json({ message: "Trip created successfully", trip, vehicle });
+      // res
+      //   .status(200)
+      //   .json({ message: "Destination created Successfully", trip });
     }
   } catch (error) {
     console.log(error);

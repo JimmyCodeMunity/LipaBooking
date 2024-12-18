@@ -93,6 +93,15 @@ const findAllVehicles = async (req, res) => {
     res.status(500).json({ message: "Error finding all vehicles" });
   }
 };
+const findAllAvailableVehicles = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find({status:"available"});
+    res.status(200).json(vehicles);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error finding all vehicles" });
+  }
+};
 
 const getAllUsersByEmail = async (req, res) => {
   try {
@@ -613,5 +622,6 @@ module.exports = {
   getBookings,
   DriverLogin,
   getCompletedTrips,
-  getInCompletedTrips
+  getInCompletedTrips,
+  findAllAvailableVehicles
 };

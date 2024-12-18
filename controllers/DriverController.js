@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const Driver = require('../models/DriverModel');
 const jwt = require("jsonwebtoken");
 const Trip = require('../models/TripModel');
+const Vehicle = require('../models/VehicleModel');
 
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
@@ -237,6 +238,11 @@ const getDriverData = async(req,res)=>{
   const DriverUpdateTripById = async (req, res) => {
     try {
       const { id } = req.params; // Trip ID from URL params
+      const mytrip = await Trip.findById(id);
+      console.log("mytrip", mytrip)
+      const myvehicleId = mytrip.vehicleId;
+      console.log("myvehicleId", myvehicleId)
+      // return
   
       // Find and update the trip status to "completed"
       const trip = await Trip.findByIdAndUpdate(
@@ -244,6 +250,12 @@ const getDriverData = async(req,res)=>{
         { status: "completed" }, // Only update the 'status' field
         { new: true } // Return the updated document
       );
+      const vehicle = await Vehicle.findByIdAndUpdate(
+        myvehicleId, 
+        { status: "available" }, // Only update the 'status' field
+        { new: true } // Return the updated document
+      );
+      console.log("trip vehicle",vehicle)
   
       if (!trip) {
         return res.status(404).json({ message: 'Trip not found' });

@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAdmin, Login, findAllVehicles, findAllUsers, createDestination, findAllDestinations, findAllTrips, getVehicleById, getAdminDataByEmail, createDriver, getAllDrivers, deleteUserById, deleteDriverById, deleteVehicleById, deleteTripById, updateUserById, updateTripById, updateVehicleById, updateDriverById, deleteDestinationById, updateDestinationById, getDestinationById, getDriverById, getBookings, DriverLogin, getInCompletedTrips, getCompletedTrips } = require('../controllers/AdminController');
+const { createAdmin, Login, findAllVehicles, findAllUsers, createDestination, findAllDestinations, findAllTrips, getVehicleById, getAdminDataByEmail, createDriver, getAllDrivers, deleteUserById, deleteDriverById, deleteVehicleById, deleteTripById, updateUserById, updateTripById, updateVehicleById, updateDriverById, deleteDestinationById, updateDestinationById, getDestinationById, getDriverById, getBookings, DriverLogin, getInCompletedTrips, getCompletedTrips, findAllAvailableVehicles } = require('../controllers/AdminController');
 const { createVehicle } = require('../controllers/VehicleController');
 const { getTripById,createTrip } = require('../controllers/TripController');
 
@@ -42,6 +42,7 @@ router.get('/alltrips',findAllTrips);
 
 //get all the vehicles
 router.get('/getvehicles',findAllVehicles);
+router.get('/getavailablevehicles',findAllAvailableVehicles);
 
 //get vehicle by id
 router.get('/getvehicle/:id',getVehicleById);
