@@ -1,5 +1,5 @@
 const express = require('express');
-const { createAdmin, Login, findAllVehicles, findAllUsers, createDestination, findAllDestinations, findAllTrips, getVehicleById, getAdminDataByEmail, createDriver, getAllDrivers, deleteUserById, deleteDriverById, deleteVehicleById, deleteTripById, updateUserById, updateTripById, updateVehicleById, updateDriverById, deleteDestinationById, updateDestinationById, getDestinationById, getDriverById, getBookings, DriverLogin, getInCompletedTrips, getCompletedTrips, findAllAvailableVehicles } = require('../controllers/AdminController');
+const { createAdmin, Login, findAllVehicles, findAllUsers, createDestination, findAllDestinations, findAllTrips, getVehicleById, getAdminDataByEmail, createDriver, getAllDrivers, deleteUserById, deleteDriverById, deleteVehicleById, deleteTripById, updateUserById, updateTripById, updateVehicleById, updateDriverById, deleteDestinationById, updateDestinationById, getDestinationById, getDriverById, getBookings, DriverLogin, getInCompletedTrips, getCompletedTrips, findAllAvailableVehicles, getAdminData } = require('../controllers/AdminController');
 const { createVehicle } = require('../controllers/VehicleController');
 const { getTripById,createTrip } = require('../controllers/TripController');
 
@@ -71,8 +71,9 @@ router.get('/tripdata/:id',getTripById);
 // router.get('/user/:email',getAllUsersByEmail);
 
 ///user login
-router.post('/login',Login);
+router.post('/adminlogin',Login);
 router.post('/driverlogin',DriverLogin);
+router.post('/admindata',getAdminData)
 
 
 //deletions
