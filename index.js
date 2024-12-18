@@ -29,7 +29,6 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
 
 const port = process.env.PORT;
 const dbconnection = process.env.DB_CONNECTION
-console.log("db",dbconnection)
 
 app.listen(port, (req, res) => {
     console.log(`Server is running on port ${port}`)
