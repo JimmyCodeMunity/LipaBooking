@@ -1,5 +1,5 @@
 const express = require('express');
-const { createDriver, findAllDrivers } = require('../controllers/DriverController');
+const { createDriver, findAllDrivers, driverLogin, getMyTrips, getDriverData, getMyIncompleteTrips, getMyCompleteTrips, DriverUpdateTripById } = require('../controllers/DriverController');
 
 
 
@@ -14,6 +14,15 @@ router.post('/createdriver',createDriver);
 
 //find all the users
 router.get('/alldrivers',findAllDrivers);
+router.post('/driverlogin',driverLogin);
+router.get('/drivertrips/:id',getMyTrips);
+router.get('/driverincompletetrips/:id',getMyIncompleteTrips);
+router.get('/drivercompletedtrips/:id',getMyCompleteTrips);
+router.post('/driverdata',getDriverData)
+
+
+// update
+router.put('/driverupdatetrip/:id',DriverUpdateTripById)
 
 //find user  by email
 // router.get('/user/:email',getAllUsersByEmail);

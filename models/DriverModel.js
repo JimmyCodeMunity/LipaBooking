@@ -16,9 +16,14 @@ const driverSchema = new mongoose.Schema({
   password: {
     type: String,
   },
-  vehicleId:{
-    type:String,
-    default:null
+  // vehicleId:{
+  //   type:String,
+  //   default:null
+  // },
+  vehicleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "vehicle", // Reference the Vehicle model
+    default: null,
   },
 //   seats: [
 //     {

@@ -12,6 +12,17 @@ const Trip = require("../models/TripModel");
 const Driver = require("../models/DriverModel");
 const Booking = require("../models/BookingModel");
 
+
+// get environment variables
+if (process.env.NODE_ENV !== 'PRODUCTION') {
+  require("dotenv").config({
+      path: "./.env"
+  })
+}
+
+const jwttoken = process.env.JWT_SECRET
+
+
 const createAdmin = async (req, res) => {
   try {
     const { fullname, email, password } = req.body;
@@ -99,32 +110,62 @@ const getAllUsersByEmail = async (req, res) => {
   }
 };
 
-const Login = async (req, res) => {
+// const Login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+//     const admin = await Admin.findOne({ email });
+
+//     if (!admin) {
+//       res.status(404).json({ error: "User not found" });
+//       return;
+//     }
+
+//     const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+//     if (!isPasswordValid) {
+//       res.status(401).json({ error: "Invalid password" });
+//       return;
+//     }
+//     const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET, {
+//       expiresIn: 7,
+//     });
+//     res.status(200).json({ admin: admin, token: token });
+//     // console.log({admin,token})
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Failed to login" });
+//   }
+// };
+const Login = async(req,res)=>{
+  console.log("jwttoken",jwttoken)
   try {
-    const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
+      const {email,password} = req.body;
+      console.log(email,password)
+      const user = await Admin.findOne({email});
 
-    if (!admin) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, admin.password);
-
-    if (!isPasswordValid) {
-      res.status(401).json({ error: "Invalid password" });
-      return;
-    }
-    const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: 7,
-    });
-    res.status(200).json({ admin: admin, token: token });
-    // console.log({admin,token})
+      if(!user){
+          return res.status(400).json({message:"User not found"});
+      }
+      const isMatch = await bcrypt.compare(password,user.password);
+      if(!isMatch){
+          return res.status(400).json({message:"Invalid credentials"});
+      }
+      else{
+          const token = jwt.sign({email:user.email}, jwttoken);
+          console.log("token",token)
+          if(res.status(200)){
+            console.log("login successfull")
+              return res.send({status:"ok",data:token})
+          }else{
+              return res.send({error:"error"})
+          }
+      }
+      
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Failed to login" });
+    console.log("error",error)
+      
   }
-};
+}
 
 //create destination point
 const createDestination = async (req, res) => {
@@ -289,7 +330,7 @@ const createDriver = async (req, res) => {
 //get all drivers
 const getAllDrivers = async (req, res) => {
   try {
-    const drivers = await Driver.find({});
+    const drivers = await Driver.find({}).populate("vehicleId");
     res.status(200).json(drivers);
   } catch (error) {
     console.log(error);
@@ -505,12 +546,40 @@ const updateDestinationById = async(req,res)=>{
 
 const getBookings = async(req,res)=>{
   try {
-    const bookings = await Booking.find({});
+    const bookings = await Booking.find({transactionStatus:"Success"}).populate(["userId","vehicleId"]);
     res.status(200).json(bookings);
     
   } catch (error) {
     console.log(error)
     res.status(500).json({message: error.message})
+    
+  }
+}
+
+
+const getCompletedTrips = async(req,res)=>{
+  try {
+    const trip = await Trip.find({status:"completed"});
+    if(trip){
+      res.status(200).json(trip);
+    }
+    
+  } catch (error) {
+    console.log("error getting completed trips")
+    return res.status(500).json({message:"error while getting completed trips"})
+    
+  }
+}
+const getInCompletedTrips = async(req,res)=>{
+  try {
+    const trip = await Trip.find({status:"pending"});
+    if(trip){
+      res.status(200).json(trip);
+    }
+    
+  } catch (error) {
+    console.log("error getting completed trips")
+    return res.status(500).json({message:"error while getting completed trips"})
     
   }
 }
@@ -542,5 +611,7 @@ module.exports = {
   getDestinationById,
   getDriverById,
   getBookings,
-  DriverLogin
+  DriverLogin,
+  getCompletedTrips,
+  getInCompletedTrips
 };

@@ -46,8 +46,6 @@
 
 // module.exports = Booking;
 
-
-
 // models/Booking.js
 
 const mongoose = require("mongoose");
@@ -56,16 +54,18 @@ const Schema = mongoose.Schema;
 // Define the Booking schema
 const BookingSchema = new Schema({
   userId: {
-    type: String,
-    required: true,
+    // type: String,
+    // required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
   },
   seats: {
     type: [String],
     required: true,
   },
   vehicleId: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "vehicle",
   },
   bookingDate: {
     type: Date,
@@ -96,10 +96,10 @@ const BookingSchema = new Schema({
   transactionStatus: {
     type: String,
   },
-  bookingStatus:{
+  bookingStatus: {
     type: String,
-    default: 'Pending',
-  }
+    default: "Pending",
+  },
   // transactionDate: {
   //   type: Date,
   //   default: Date.now,

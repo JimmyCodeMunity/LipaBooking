@@ -9,6 +9,7 @@ const path = require('path')
 //app routes
 const userRoute = require('./routes/UserRoute');
 const adminRoute = require('./routes/AdminRoute');
+const driverRoute = require('./routes/DriverRoute');
 const paymentRoute = require('./routes/PaymentRoute');
 
 
@@ -27,7 +28,8 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
 }
 
 const port = process.env.PORT;
-//const dbconnection = process.env.DB_CONNECTION
+const dbconnection = process.env.DB_CONNECTION
+console.log("db",dbconnection)
 
 app.listen(port, (req, res) => {
     console.log(`Server is running on port ${port}`)
@@ -41,7 +43,7 @@ app.get('/', (req, res) => {
 
 
 
-mongoose.connect(dbconnection, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbconnection)
     .then(() => {
         console.log('DB Connected Successfully');
     })
@@ -56,4 +58,5 @@ mongoose.connect(dbconnection, { useNewUrlParser: true, useUnifiedTopology: true
 app.use('/api/v1/user',userRoute);
 app.use('/api/v1/payment',paymentRoute);
 app.use('/api/v1/admin',adminRoute);
+app.use('/api/v1/driver',driverRoute);
 
