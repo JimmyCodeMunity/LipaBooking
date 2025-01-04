@@ -271,6 +271,76 @@ const getDriverData = async(req,res)=>{
       res.status(500).json({ message: error.message });
     }
   };
+
+  const updateDriver = async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body; // Assuming the updated data is sent in the request body
+  
+    try {
+      // Check if the driver exists
+      const driver = await Driver.findById(id);
+      if (!driver) {
+        console.log("Driver not found");
+        return res.status(404).json({ message: "Driver not found" });
+      }
+  
+      // Update the driver and return the updated document
+      const updatedDriver = await Driver.findByIdAndUpdate(id, updatedData, { new: true });
+  
+      // If the driver is updated, send the updated driver data
+      if (updatedDriver) {
+        console.log("Updated driver", updatedDriver);
+        return res.status(200).json(updatedDriver); // Returning the updated driver data
+      }
+  
+      // If no driver was updated for some reason
+      res.status(400).json({ message: "Failed to update driver" });
+  
+    } catch (error) {
+      console.log("Error updating driver", error);
+      res.status(500).json({ message: error.message });
+    }
+  };
+// Import bcrypt or any other hashing library you use
+
+const updateDriverPassword = async (req, res) => {
+  const { id } = req.params;
+  console.log("id found",id)
+  const { currentPassword, newPassword } = req.body; // Assuming current and new passwords are sent in the body
+  console.log("current", currentPassword,"new", newPassword)
+  try {
+    // Check if the driver exists
+    const driver = await Driver.findById(id);
+    if (!driver) {
+      console.log("Driver not found");
+      return res.status(404).json({ message: "Driver not found" });
+    }
+    console.log("driver",driver)
+
+    // Compare the current password with the stored password
+    const isMatch = await bcrypt.compare(currentPassword, driver.password);
+    if (!isMatch) {
+      console.log("wrong current password")
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // Hash the new password before updating
+    const hashedPassword = await bcrypt.hash(newPassword, 10); // You can adjust the salt rounds as necessary
+
+    // Update the driver's password
+    driver.password = hashedPassword;
+    await driver.save();
+
+    console.log("Password updated successfully");
+    return res.status(200).json({ message: "Password updated successfully" });
+
+  } catch (error) {
+    console.log("Error updating password", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+  
   
 
 
@@ -282,6 +352,8 @@ module.exports = {
     getDriverData,
     getMyIncompleteTrips,
     getMyCompleteTrips,
-    DriverUpdateTripById
+    DriverUpdateTripById,
+    updateDriver,
+    updateDriverPassword
   
 }
